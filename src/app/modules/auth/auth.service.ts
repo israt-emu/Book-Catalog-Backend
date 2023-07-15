@@ -6,18 +6,13 @@ import {ApiError} from "../../../handleErrors/ApiError";
 import {ILoginResponse, ILoginUser, IRefreshTokenResponse} from "./auth.interface";
 import {createToken, verifyToken} from "../../../shared/jwtHelpers";
 import {Secret} from "jsonwebtoken";
-import {Admin} from "../admin/admin.model";
+
 
 export const createUserService = async (user: IUser): Promise<Partial<IUser> | null> => {
   //set password
   if (!user.password) {
     user.password = config.default_user_pass as string;
   }
-  //check whether budget is provided for buyer role
-  if (user.role === "buyer" && !user.budget) {
-    throw new ApiError(httpStatus.NOT_ACCEPTABLE, "Please put your budget");
-  }
-
   //creating user
   const newUser = (await User.create(user)).toObject();
   if (!newUser) {
@@ -29,10 +24,10 @@ export const createUserService = async (user: IUser): Promise<Partial<IUser> | n
 
 //
 export const loginUserService = async (payload: ILoginUser): Promise<ILoginResponse> => {
-  const {phoneNumber, password} = payload;
+  const {email, password} = payload;
   //creating insatnce method
   const user = new User();
-  const isUserExist = await user.isUserExist(phoneNumber);
+  const isUserExist = await user.isUserExist(email);
   if (!isUserExist) {
     throw new ApiError(httpStatus.NOT_FOUND, "User doesn't found");
   }
@@ -41,12 +36,12 @@ const isPasswordMatched=await user.isPasswordMatched(password, isUserExist.passw
     throw new ApiError(httpStatus.UNAUTHORIZED, "password is incorrect");
   }
   //create accesstoken & refresh token
-  const {_id: userId, role} = isUserExist;
-  const accessToken = createToken({userId, role}, config.jwt.secret as Secret, {
+  const {_id: userId, email:userEmail} = isUserExist;
+  const accessToken = createToken({userId, userEmail}, config.jwt.secret as Secret, {
     expiresIn: config.jwt.expires_in,
   });
 
-  const refreshToken = createToken({userId, role}, config.jwt.refresh_secret as Secret, {expiresIn: config.jwt.refresh_expires_in});
+  const refreshToken = createToken({userId, userEmail}, config.jwt.refresh_secret as Secret, {expiresIn: config.jwt.refresh_expires_in});
 
   return {
     accessToken,
@@ -62,23 +57,15 @@ export const refreshTokenService = async (token: string): Promise<IRefreshTokenR
   } catch (error) {
     throw new ApiError(httpStatus.FORBIDDEN, "Invalid refresh token");
   }
-  const {userId, role} = verifiedToken;
-  if (role === "admin") {
-    const admin = new Admin();
-    const isAdminExist = await admin.isAdminExistById(userId);
-    if (!isAdminExist) {
-      throw new ApiError(httpStatus.NOT_FOUND, "Admin doesn't found");
-    }
-    newAccessToken = createToken({userId: isAdminExist._id, role: isAdminExist.role, phoneNumber: isAdminExist.phoneNumber}, config.jwt.secret as Secret, {expiresIn: config.jwt.expires_in});
-  } //
-  else {
+  const {userId, userEmail} = verifiedToken;
+  
     const user = new User();
     const isUserExist = await user.isUserExistById(userId);
     if (!isUserExist) {
       throw new ApiError(httpStatus.NOT_FOUND, "user doesn't found");
     }
-    newAccessToken = createToken({userId: isUserExist._id, role: isUserExist.role, phoneNumber: isUserExist.phoneNumber}, config.jwt.secret as Secret, {expiresIn: config.jwt.expires_in});
-  }
+    newAccessToken = createToken({userId: isUserExist._id, userEmail: isUserExist.email,}, config.jwt.secret as Secret, {expiresIn: config.jwt.expires_in});
+  
 
   return {
     accessToken: newAccessToken,
