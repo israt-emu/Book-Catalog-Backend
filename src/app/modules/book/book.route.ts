@@ -1,5 +1,5 @@
 import express from "express";
-import {createBook, deleteBook, getAllBooks, getSingleBook, updateBook} from "./book.controller";
+import {addReview, createBook, deleteBook, getAllBooks, getSingleBook, updateBook} from "./book.controller";
 import {auth} from "../../middlewares/auth";
 import {ENUM_USER_ROLE} from "../../../enums/user";
 import {validateRequest} from "../../middlewares/validateRequest";
@@ -30,6 +30,12 @@ router.patch(
   validateRequest(updateBookZodSchema),
   //auth(document, ENUM_USER_ROLE.USER),
   updateBook
+);
+router.patch(
+  "/addReview/:id",
+  validateRequest(updateBookZodSchema),
+  //auth(document, ENUM_USER_ROLE.USER),
+  addReview
 );
 router.get(
   "/",

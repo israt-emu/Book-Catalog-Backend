@@ -15,7 +15,12 @@ export const createBookZodSchema = z.object({
     publicationDate: z.string({
       required_error: "Publication date is required",
     }),
-    review: z.string().optional(),
+    reviews: z
+      .object({
+        id: z.string().optional(),
+        review: z.string().optional(),
+      })
+      .optional(),
     image: z.string().optional(),
   }),
 });
@@ -25,7 +30,12 @@ export const updateBookZodSchema = z.object({
     author: z.string().optional(),
     genre: z.string().optional(),
     publicationDate: z.string().optional(),
-    review: z.string().optional(),
+    reviews: z
+      .object({
+        id: z.string().optional(),
+        review: z.string().optional(),
+      })
+      .optional(),
     image: z.string().optional(),
   }),
 });

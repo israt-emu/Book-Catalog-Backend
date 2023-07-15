@@ -1,12 +1,12 @@
 import httpStatus from "http-status";
-import { catchAsync } from "../../../shared/catchAsync";
-import { sendResponse } from "../../../shared/sendResponse";
-import { addBookService, deleteBookService, getAllBooksService, getSingleBookService, updateBookService } from "./book.service";
-import { IBook } from "./book.interface";
-import { Request, Response } from "express";
-import { pick } from "../../../shared/pick";
-import { bookFilterableFields } from "./book.constant";
-import { paginationFields } from "../../../constant/pagination";
+import {catchAsync} from "../../../shared/catchAsync";
+import {sendResponse} from "../../../shared/sendResponse";
+import {addBookService, addReviewService, deleteBookService, getAllBooksService, getSingleBookService, updateBookService} from "./book.service";
+import {IBook} from "./book.interface";
+import {Request, Response} from "express";
+import {pick} from "../../../shared/pick";
+import {bookFilterableFields} from "./book.constant";
+import {paginationFields} from "../../../constant/pagination";
 
 export const createBook = catchAsync(async (req: Request, res: Response) => {
   const book = req.body;
@@ -43,7 +43,7 @@ export const getSingleBook = catchAsync(async (req: Request, res: Response) => {
     data: book,
   });
 });
-//update cow
+//update book
 export const updateBook = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
   const updatedData = req?.body;
@@ -65,5 +65,17 @@ export const deleteBook = catchAsync(async (req: Request, res: Response) => {
     success: true,
     message: "Book deleted successfully!",
     data: book,
+  });
+});
+//add reviews
+export const addReview = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const review = req?.body;
+  const updatedBook = await addReviewService(id, review);
+  sendResponse<IBook>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Review added successfully!",
+    data: updatedBook,
   });
 });

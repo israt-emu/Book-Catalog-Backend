@@ -1,6 +1,6 @@
 import httpStatus from "http-status";
 import {ApiError} from "../../../handleErrors/ApiError";
-import {IBook, IBookFilters} from "./book.interface";
+import {IBook, IBookFilters, Review} from "./book.interface";
 import {Book} from "./book.model";
 import {bookSearchableFields} from "./book.constant";
 import {SortOrder} from "mongoose";
@@ -82,5 +82,22 @@ export const deleteBookService = async (id: string): Promise<IBook | null> => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Book not found!");
   }
   const result = await Book.findByIdAndDelete(id);
+  return result;
+};
+
+//add reviews
+export const addReviewService = async (id: string, review: Review): Promise<IBook | null> => {
+  const isExist = await Book.findById({_id: id});
+  if (!isExist) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Book not found!");
+  }
+
+  const result = await Book.findOneAndUpdate(
+    {_id: id},
+    {$push: {reviews: review}},
+    {
+      new: true,
+    }
+  );
   return result;
 };
