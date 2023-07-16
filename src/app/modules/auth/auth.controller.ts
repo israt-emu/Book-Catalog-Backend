@@ -13,7 +13,7 @@ export const createUser = catchAsync(async (req: Request, res: Response) => {
   sendResponse<Partial<IUser>>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "User created successfully!",
+    message: "Signed up successfully!",
     data: newUser,
   });
 });

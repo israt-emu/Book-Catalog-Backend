@@ -65,6 +65,7 @@ export const getSingleBookService = async (id: string): Promise<IBook | null> =>
 //update IBook
 export const updateBookService = async (id: string, payload: Partial<IBook>): Promise<IBook | null> => {
   const isExist = await Book.findById({_id: id});
+  console.log(id, payload);
   if (!isExist) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Book not found!");
   }
