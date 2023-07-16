@@ -5,6 +5,11 @@ import {ReadList} from "./readlist.model";
 
 //add wishlist
 export const addReadListService = async (payload: IReadList) => {
+  const {user, book} = payload;
+  const isExist = await ReadList.findOne({user, book});
+  if (isExist) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Already added this book to readlist!");
+  }
   const newList = await ReadList.create(payload);
   if (!newList) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Failed to create list!");
@@ -12,8 +17,8 @@ export const addReadListService = async (payload: IReadList) => {
   return newList;
 };
 //get all lists
-export const getAllReadListService = async (): Promise<IReadList[]> => {
-  const lists = await ReadList.find({}).populate("user").populate("book");
+export const getAllReadListService = async (id: string): Promise<IReadList[]> => {
+  const lists = await ReadList.find({user: id}).populate("user").populate("book");
   return lists;
 };
 //update list

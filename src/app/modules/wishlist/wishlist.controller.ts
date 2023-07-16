@@ -18,7 +18,8 @@ export const createWishList = catchAsync(async (req: Request, res: Response) => 
 });
 //get all lists
 export const getAllWishList = catchAsync(async (req: Request, res: Response) => {
-  const lists = await getAllWishListService();
+  const {id}=req.params;
+  const lists = await getAllWishListService(id);
   sendResponse<IWishList[]>(res, {
     statusCode: httpStatus.OK,
     success: true,

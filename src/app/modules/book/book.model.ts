@@ -27,7 +27,7 @@ const BookSchema = new Schema<IBook, BookModel>(
     },
     reviews: [
       {
-        id: {
+        user: {
           type: Schema.Types.ObjectId,
           ref: "User",
         },

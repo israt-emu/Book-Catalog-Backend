@@ -18,7 +18,8 @@ export const createReadList = catchAsync(async (req: Request, res: Response) => 
 });
 //get all lists
 export const getAllReadList = catchAsync(async (req: Request, res: Response) => {
-  const lists = await getAllReadListService();
+  const {id} = req.params;
+  const lists = await getAllReadListService(id);
   sendResponse<IReadList[]>(res, {
     statusCode: httpStatus.OK,
     success: true,

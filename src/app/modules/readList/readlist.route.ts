@@ -4,5 +4,5 @@ const router = express.Router();
 //
 router.patch("/:id", updateReadList);
 router.post("/", createReadList);
-router.get("/", getAllReadList);
+router.get("/:id", getAllReadList);
 export const ReadListRoutes = router;

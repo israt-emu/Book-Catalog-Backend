@@ -17,7 +17,7 @@ export const createBookZodSchema = z.object({
     }),
     reviews: z
       .object({
-        id: z.string().optional(),
+        user: z.string().optional(),
         review: z.string().optional(),
       })
       .optional(),
@@ -32,7 +32,7 @@ export const updateBookZodSchema = z.object({
     publicationYear: z.string().optional(),
     reviews: z
       .object({
-        id: z.string().optional(),
+        user: z.string().optional(),
         review: z.string().optional(),
       })
       .optional(),
