@@ -11,7 +11,7 @@ import {calculatePagination} from "../../../shared/paginationHelper";
 export const addBookService = async (payload: IBook) => {
   const newBook = await Book.create(payload);
   if (!newBook) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Failed to create cow!");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Failed to create book!");
   }
   return newBook;
 };

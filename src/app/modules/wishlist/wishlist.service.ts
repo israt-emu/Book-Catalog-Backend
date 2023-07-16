@@ -7,7 +7,7 @@ import {WishList} from "./wishlist.model";
 export const addWishListService = async (payload: IWishList) => {
   const newWishList = await WishList.create(payload);
   if (!newWishList) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Failed to create cow!");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Failed to create list!");
   }
   return newWishList;
 };
